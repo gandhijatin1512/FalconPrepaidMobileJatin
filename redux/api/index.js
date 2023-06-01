@@ -48,7 +48,7 @@ export const getEnterpriseDetailsLogin = async (data = {}) => {
 };
 
 export const getPasscodeLogin = async (data = {}) => {
-  console.log("getPasscodeLogin started");
+  console.log('getPasscodeLogin started from index file');
   const {passcode} = data;
   // console.log(passcode);
   return axiosClient.post(BASE_URL + 'v1/employees/me/passcode/validate', { passcode: passcode , passcodeType: 'SECURITY'});

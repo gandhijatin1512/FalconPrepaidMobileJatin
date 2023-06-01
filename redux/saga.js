@@ -5,16 +5,19 @@ import {API_CALL} from './actions/actionTypes';
 // import { unauthorizationErrorAction } from '../redux/actions/actions';
 
 //import axios from 'axios';
-import axiosClient from './api/axiosClient';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BASE_URL = 'http://prepaidqa.tab.kitecash.in/kite/';
 
 async function handleUnauthorizedFunction(){
       const token = JSON.parse(await AsyncStorage.getItem('token'));
-      const response = await axiosClient.post(BASE_URL + 'v1/employees/re-authenticate',{},{headers:{'Refresh-Token': token.jwt.refreshToken}})
+      const companyCode = JSON.parse(await AsyncStorage.getItem('enterprise'));
+      const response = await axios.post(BASE_URL + 'v1/employees/re-authenticate',{},{headers:{'Refresh-Token': token.jwt.refreshToken,'enterprise': companyCode}});
       console.log(JSON.stringify(response));
-      await (AsyncStorage.setItem('token', JSON.stringify(response)));
+      await AsyncStorage.setItem('token', JSON.stringify(response));
+      const updatedToken = await AsyncStorage.getItem('token');
+      console.log('token updated', updatedToken);
 }
 
 // worker saga
@@ -47,7 +50,7 @@ function* callApi(action) {
       console.log('401 detected');
       //yield put(unauthorizationErrorAction(action));
       //console.log('getUnauthorizationError started');
-      handleUnauthorizedFunction();
+      yield call(handleUnauthorizedFunction);
       yield put(action);
     }
     else {
@@ -57,9 +60,9 @@ function* callApi(action) {
       });
     }
   }
-
-  // yield call(promise, companyCode);
 }
+  // yield call(promise, companyCode);
+//}
 
 // watcher saga
 function* getApiActions() {

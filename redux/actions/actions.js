@@ -47,7 +47,7 @@ export const getPasscodeAction = payload => {
 
 
 export const getPasscodeActionLogin = payload => {
-  console.log('action passed');
+  console.log('action passed for passcode login');
   return {
     type: API_CALL,
     subtype: GET_PASSCODE_LOGIN,
